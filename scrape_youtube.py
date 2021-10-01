@@ -53,15 +53,11 @@ if __name__ == '__main__':
             songs.append(song)
 
             
-    finished_songs = []
-    for fname in glob.glob("./spotify_yt_data/*.flac"):
-        fname = fname.split('/')
-        song_id = fname[-1][:-5]
-        finished_songs.append(song_id)
-
         
-    search_terms = songs
+    df = pd.read_csv("finished_songs.csv", header=None)
+    finished_songs = df[0].values.tolist()
     
+    search_terms = songs
     curr_count = 4955
     prev = curr_count
     
