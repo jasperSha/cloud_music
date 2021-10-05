@@ -77,7 +77,6 @@ if __name__ == '__main__':
     curr_count = 4955
     prev = curr_count
     
-    df = pd.read_csv("metadata.csv")
     metadata = []
     for search in search_terms[curr_count:]:
         print("index: ", prev)
