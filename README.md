@@ -34,3 +34,15 @@ note: the curr_count variable on line 77 are the last index up to which I've dow
 
 also, after every download session, please run the update_finished_songs script in order to append all new songs that have been downloaded to the finished_songs.csv file. After that, please git push the finished_songs.csv to the repo
 
+so first:
+
+```
+./update_finished_songs.py
+
+git add finished_songs.csv
+
+git commit -m 'updated finished songs'
+git pull
+git push
+
+```
