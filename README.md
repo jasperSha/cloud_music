@@ -22,7 +22,10 @@ let's install the libraries outlined by the requirements.txt file
 
 here we set our python script to be executable
 
-`chmod u+x scrape_youtube.py`
+```
+chmod u+x scrape_youtube.py
+chmod u+x update_finished_songs.py
+```
 
 now we simply run it to begin downloading Youtube files; this script will create a directory called spotify_yt_data/ and then download Youtube audio in flac format into that directory for storage
 
@@ -42,9 +45,7 @@ so first:
 ./update_finished_songs.py
 
 git add finished_songs.csv
-
 git commit -m 'updated finished songs'
 git pull
 git push
-
 ```
