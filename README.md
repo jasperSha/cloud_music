@@ -26,6 +26,8 @@ here we set our python script to be executable
 
 now we simply run it to begin downloading Youtube files; this script will create a directory called spotify_yt_data/ and then download Youtube audio in flac format into that directory for storage
 
+note: first download the finished_songs.csv file from the repo, either with git pull or just manually downloading from the repo(probably just do this tbh)
+
 `./scrape_youtube.py`
 
 
