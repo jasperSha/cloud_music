@@ -49,3 +49,32 @@ git commit -m 'updated finished songs'
 git pull
 git push
 ```
+
+
+Features to extract
+
+```
+zero crossing rate: number of times the soundwave crosses zero (dynamic songs like rock/metal have larger zero crossing rates)
+
+spectral centroid: weighted mean of the frequences present in the signal, calculated with an FFT
+
+rolloff frequency: the center frequency of a spectrogram bin such that some percentage(default=0.85) of the energy of the spectrum lies within this range(with roll_percent=1 or 0, this gives us the max or min frequency of the song)
+
+mel frequency cepstral coefficients(mfcc) that describe the overall shape of a spectral envelope, in music known as the timbre of a segment of a song
+
+spectral contrast: considers spectral peak, valley, and difference in each frequency subband
+
+spectral bandwidth computes the order- p spectral bandwidth, with p=2, it's a weighted standard deviation of the frequencies
+
+spectral flatness: ratio of the geometric mean to the arithmetic mean of a power spectrum
+
+chromagram of the power spectrogram
+silence counting
+```
+
+These features are extremely large wrt the songs, as their size==the number of frames in the signal. So we can just look at the max, min, std dev, mean, kurtosis, and skew of each feature
+
+
+
+
+
