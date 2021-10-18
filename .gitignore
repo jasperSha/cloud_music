@@ -1,8 +1,8 @@
 env/
 .ipynb_checkpoints/
 
-*.csv
 *.json
 
 spotify_yt_data/
+spectrogram/
 
