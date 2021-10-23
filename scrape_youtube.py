@@ -78,7 +78,7 @@ if __name__ == '__main__':
     column_order = df.columns
 
     search_terms = songs
-    curr_count = 20009
+    curr_count = 12535
     prev = curr_count
     
     metadata = []
