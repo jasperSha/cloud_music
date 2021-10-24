@@ -72,9 +72,18 @@ chromagram of the power spectrogram
 silence counting
 ```
 
-These features are extremely large wrt the songs, as their size==the number of frames in the signal. So we can just look at the max, min, std dev, mean, kurtosis, and skew of each feature
 
+Current workflow:
+```
+Download song data --> flac files
+run flac_to_array script to convert flac files into numpy arrays and write to csv, and gather some additional metadata
+numpy array csv files will be batched to run through librosa to convert to images(mel spec or CQT)
+numpy array csv files batched to gather frequency features as mentioned above
+finally, images run through deep clustering to get our clusters/classifications of unlabeled data
 
-
+Possible requirement:
+    run song id's through spotify API to get genre and some other labels spotify uses such as danceability
+    use this labeled data as a metric for the performance of our deep unsupervised clustering
+```
 
 
