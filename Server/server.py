@@ -8,7 +8,9 @@ import threading
 
 # Constants
 MAX_BUFFER = 1024
+HEADER = 128
 PORT = 9001
+FORMAT = "utf-8"
 HOST = socket.gethostbyname(socket.gethostname())
 ADDR = (HOST, PORT)
 
@@ -18,11 +20,11 @@ def handle_client(conn, addr):
 		print(f"[New connection...{addr}]")
 		connected = True
 		while connected:
-			data = conn.recv(MAX_BUFFER)
+			data = conn.recv(HEADER).decode(FORMAT)
 			if not data:
 				connected = False
 			else:
-				print("[Message recv]   ", data)
+				print(f"[{addr}] {data}")
 	print("[Closed connection]")
 
 def main():
