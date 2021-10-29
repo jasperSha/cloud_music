@@ -21,6 +21,12 @@ def pull_song(search_args, finished_songs, captions=False):
                      }],
                  'ignoreerrors': True
                  }
+    meta = {
+            'id': None,
+            'artist': None,
+            'title': None,
+            'duration': None
+            }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         results = ydl.extract_info(f"ytsearch:{search_args}", download=False)['entries']
         
@@ -43,18 +49,12 @@ def pull_song(search_args, finished_songs, captions=False):
         
                 # grabbing metadata here
                 artist = None # some videos do not have artists; this could be a reference for cleaning unwanted data
-                if 'artist' in info.keys():
-                    artist = info['artist']
-                tag = info['id']
-                title = info['title']
-                duration = info['duration']
                 print("Grabbing metadata of: ", title)
-                meta = {
-                        'id': tag, # youtube uses this in their url
-                        'artist': artist,
-                        'title': title,
-                        'duration': duration
-                        }
+                if 'artist' in info.keys():
+                    meta['artist'] = info['artist']
+                meta['id'] = info['id']
+                meta['title'] = info['title']
+                meta['duration'] = info['duration']
                 return meta
 
  
