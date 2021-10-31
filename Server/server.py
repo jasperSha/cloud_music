@@ -2,57 +2,50 @@
 Python server for clients to accees and upload their model.
 """
 
-# import
+# imports
 import socket
 import threading
 
 # Constants
 MAX_BUFFER = 1024
-HEADER = 64
 PORT = 9002
 FORMAT = "utf-8"
 HOST = socket.gethostbyname(socket.gethostname())
 ADDR = (HOST, PORT)
 
+def post_request(client, request):
+	"""
+	Read file from the socket and write to local area
+	"""
+	
 
-# POST
-def process_post(conn, addr):
-	print(f"[{addr}: POST]")
+# parse request
+def parsee_request(request):
+	"""
+	Break down the user request
+	to use for later
+	"""
+	lines = request.split("\r\n")
+	request_line = lines[0]
+	method = request_line[0]
+	path = request_line[1]
+	protocol = request_line[2]
+	return (method, path, protocol)
 
-	# get msg_len
-	msg_len = conn.recv(HEADER).decode(FORMAT)
-	if not msg_len:
-		# return error
-		pass
-	else:
-		msg_len = int(msg_len)
-		msg = conn.recv(msg_len).decode(FORMAT)
-		msg = msg.split()
-		file_name = msg[0]
-		file_length = msg[1]
-
-		print(f"[{addr}: {file_name} {file_length}]")
-
-	# get file name and file length
-
-	# write the file
 
 # handle client requests
 def handle_client(conn, addr):
 	with conn:
-		print(f"[New connection...{addr}]")
-		connected = True
-		while connected:
-			#get length of initial message
-			msg_len = conn.recv(HEADER).decode(FORMAT)
-			if not msg_len:
-				#client disconnected
-				connected = False
-			else:
-				msg_len = int(msg_len)
-				msg = conn.recv(msg_len).decode(FORMAT)
-				if msg == 'POST':
-					process_post(conn, addr)
+		# read data
+		client_request = conn.recv(MAX_BUFFER).decode(FORMAT)
+		print(client_request)
+		header = parsee_request(client_request)
+		if header[0] == "POST":
+			post_request(conn, client_request)
+		accept_message = "HTTP/1.1 200 OK\r\nHello\r\n\r\n"
+		accept_message = accept_message.encode()
+		conn.sendall(accept_message)
+		print("sent")
 
 				
 	print("[Closed connection]")
