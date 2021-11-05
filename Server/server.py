@@ -36,12 +36,18 @@ def parsee_request(request):
 # handle client requests
 def handle_client(conn, addr):
 	with conn:
+		
 		# read data
 		client_request = conn.recv(MAX_BUFFER).decode(FORMAT)
-		print(client_request)
-		header = parsee_request(client_request)
-		if header[0] == "POST":
-			post_request(conn, client_request)
+		while len(client_request) == MAX_BUFFER:
+			# check if content length is greater than the 
+			print(client_request)
+			client_request = conn.recv(MAX_BUFFER).decode(FORMAT)
+			
+			"""header = parsee_request(client_request)
+			if header[0] == "POST":
+				post_request(conn, client_request)
+			"""
 		accept_message = "HTTP/1.1 200 OK\r\nHello\r\n\r\n"
 		accept_message = accept_message.encode()
 		conn.sendall(accept_message)

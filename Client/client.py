@@ -24,7 +24,7 @@ my_data = b"Hello From here"
 	server.send(msg_length)
 	server.send(msg)"""
 def send_post():
-	file = {"file": open("Client/test.txt", "rb")}
+	file = {"file": open("README.md", "rb")}
 
 	r = requests.post(URL, files=file, stream=True)	
 	r.close()
