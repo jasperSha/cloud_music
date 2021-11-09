@@ -23,6 +23,12 @@ my_data = b"Hello From here"
 	msg_length += b' ' * (64 - len(msg_length))
 	server.send(msg_length)
 	server.send(msg)"""
+
+def send_get():
+	r = requests.get(URL, stream=True)
+	r.close()
+
+
 def send_post():
 	file = {"file": open("README.md", "rb")}
 
@@ -31,6 +37,7 @@ def send_post():
 
 def main():
 	send_post()
+	#send_get()
 	
 
 

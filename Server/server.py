@@ -13,41 +13,69 @@ FORMAT = "utf-8"
 HOST = socket.gethostbyname(socket.gethostname())
 ADDR = (HOST, PORT)
 
-def post_request(client, request):
-	"""
-	Read file from the socket and write to local area
-	"""
+class HTTP_Parser:
 	
+	def __init__(self, client_request):
+		self.request = client_request
+		self.error = None
 
-# parse request
-def parsee_request(request):
-	"""
-	Break down the user request
-	to use for later
-	"""
-	lines = request.split("\r\n")
-	request_line = lines[0]
-	method = request_line[0]
-	path = request_line[1]
-	protocol = request_line[2]
-	return (method, path, protocol)
 
+	def HTTP_information(self):
+		request_line = self.lines[0].split()
+		self.method = request_line[0]
+		self.api_path = request_line[1]
+		self.protocol = request_line[2]
+
+	def POST_request(self):
+		if "Content-Length" in self.requets:
+			index =  self.lines.find("Content-Length")
+		else:
+			print("Here")
+			self.error  = 400
+			return
+		print(index)
+
+	def GET_request(self):
+		pass
+
+	def parse_request(self):
+		"""
+		Break down the user request by seperating into new lines
+		"""
+		self.lines = self.request.split("\r\n")
+		self.HTTP_information()
+		if self.method == "POST":
+			self.POST_request()
+		elif self.method == "GET":
+			self.GET_request()
+		else:
+			# method requested is not allowed
+			self.error = 405
 
 # handle client requests
 def handle_client(conn, addr):
 	with conn:
+
+		# determine if information is ready to receive from the socket
 		
 		# read data
 		client_request = conn.recv(MAX_BUFFER).decode(FORMAT)
+		# parse intial data transfer from the client
+		request = HTTP_Parser(client_request)
+		request.parse_request()
+
+
+		# determine all of the data needed to read from the client
 		while len(client_request) == MAX_BUFFER:
-			# check if content length is greater than the 
-			print(client_request)
+			# print request
+			#print(client_request)
 			client_request = conn.recv(MAX_BUFFER).decode(FORMAT)
 			
 			"""header = parsee_request(client_request)
 			if header[0] == "POST":
 				post_request(conn, client_request)
 			"""
+		#print(client_request)
 		accept_message = "HTTP/1.1 200 OK\r\nHello\r\n\r\n"
 		accept_message = accept_message.encode()
 		conn.sendall(accept_message)
