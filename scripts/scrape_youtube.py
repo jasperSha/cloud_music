@@ -78,7 +78,11 @@ if __name__ == '__main__':
     column_order = df.columns
 
     search_terms = songs
+<<<<<<< HEAD:scrape_youtube.py
+    curr_count = 13374
+=======
     curr_count = 20009
+>>>>>>> main:scripts/scrape_youtube.py
     prev = curr_count
     
     metadata = []
