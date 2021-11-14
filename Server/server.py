@@ -27,13 +27,17 @@ class HTTP_Parser:
 		self.protocol = request_line[2]
 
 	def POST_request(self):
-		if "Content-Length" in self.requets:
-			index =  self.lines.find("Content-Length")
+		# get content length
+		print(self.lines)
+		if "Content-Length" in self.lines[6]:
+			# get integer size coresponding to file length from requesrt
+			self.file_size = int(self.lines[6].split()[1])
 		else:
 			print("Here")
 			self.error  = 400
 			return
-		print(index)
+
+		# get content bounr
 
 	def GET_request(self):
 		pass
@@ -61,6 +65,7 @@ def handle_client(conn, addr):
 		# read data
 		client_request = conn.recv(MAX_BUFFER).decode(FORMAT)
 		# parse intial data transfer from the client
+		#print(client_request)
 		request = HTTP_Parser(client_request)
 		request.parse_request()
 
@@ -85,6 +90,7 @@ def handle_client(conn, addr):
 	print("[Closed connection]")
 
 def main():
+	print(ADDR)
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
 		server.bind(ADDR)
 		server.listen()

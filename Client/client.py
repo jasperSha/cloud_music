@@ -27,8 +27,7 @@ my_data = b"Hello From here"
 def send_get():
 	r = requests.get(URL, stream=True)
 	r.close()
-
-
+	
 def send_post():
 	file = {"file": open("README.md", "rb")}
 
