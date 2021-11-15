@@ -31,11 +31,12 @@ def send_get():
 def send_post():
 	# file = {"file": open("README.md", "rb")}
 
-	api = "/playlist"
+	api = "/model/update"
 	
 	data = dict(songid = "flac1234")
 
-	r = requests.get(URL + api, data=data, stream=True)	
+	r = requests.post(URL + api, data=data, stream=True)
+	print(r.content)	
 	r.close()
 
 def main():

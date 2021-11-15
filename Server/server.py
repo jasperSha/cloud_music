@@ -15,11 +15,15 @@ ADDR = (HOST, PORT)
 
 VALID_CALLS = {"/model/update": "POST", "/user/initialize": "GET", "/playlist": "GET"}
 
+
+ERROR_RESPONSES = {400 : "HTTP/1.1 400 Bad Request\r\n\r\n", 404: "HTTP/1.1 404 Not Found\r\n\r\n",
+    405: "HTTP/1.1 405 Method Not Allowed\r\n\r\n", 406: "HTTP/1.1 406 Not Acceptable\r\n\r\n"}
+
 class HTTP_Parser:
 	
 	def __init__(self, client_request, conn):
 		self.request = client_request
-		self.sockect = conn
+		self.socket = conn
 		self.error = None
 		
 
@@ -54,6 +58,7 @@ class HTTP_Parser:
 	def check_API(self):
 		if self.api_path not in VALID_CALLS:
 			self.error = 404
+			return
 		if self.method != VALID_CALLS[self.api_path]:
 			self.error = 405
 		
@@ -90,13 +95,12 @@ class HTTP_Parser:
 		# check API and protocol here
 		self.check_API()
 		if self.check_error():
-			print("[Bad request]", self.error)
-			return
+			return self.error
+
 		self.check_protocol()
 		if self.check_error():
 			print("[Bad request]", self.error)
-			return
-
+			return self.error
 
 		if self.method == "POST":
 			self.POST_request()
@@ -107,7 +111,7 @@ class HTTP_Parser:
 			self.error = 405
 		if self.check_error():
 			print("[Bad request]", self.error)
-			return
+			return self.error
 		
 
 # handle client requests
@@ -118,14 +122,20 @@ def handle_client(conn, addr):
 		
 		# read data
 		client_request = conn.recv(MAX_BUFFER).decode(FORMAT)
+		print(client_request)
 		# parse intial data transfer from the client
 		request = HTTP_Parser(client_request, conn)
-		request.parse_request()
+		result = request.parse_request()
 
-		accept_message = "HTTP/1.1 200 OK\r\nHello\r\n\r\n"
-		accept_message = accept_message.encode()
-		conn.sendall(accept_message)
-				
+		if result != None:
+			message = ERROR_RESPONSES[result].encode()
+			print(message)
+			conn.sendall(message)
+		else:
+			accept_message = "HTTP/1.1 200 OK\r\nHello\r\n\r\n"
+			accept_message = accept_message.encode()
+			conn.sendall(accept_message)
+			print(accept_message)
 	print("[Closed connection]")
 
 def main():
