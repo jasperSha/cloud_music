@@ -29,9 +29,13 @@ def send_get():
 	r.close()
 	
 def send_post():
-	file = {"file": open("README.md", "rb")}
+	# file = {"file": open("README.md", "rb")}
 
-	r = requests.post(URL, files=file, stream=True)	
+	api = "/playlist"
+	
+	data = dict(songid = "flac1234")
+
+	r = requests.get(URL + api, data=data, stream=True)	
 	r.close()
 
 def main():
