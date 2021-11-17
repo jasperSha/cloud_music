@@ -9,46 +9,66 @@ import os
 PORT =  9002
 HOST = socket.gethostbyname(socket.gethostname())
 ADDR = (HOST, PORT)
+MAX_BUFFER = 1024
 FORMAT = "utf-8"
-HEADER = 64
-URL = "http://" + HOST + ":" + str(PORT)
 
-my_data = b"Hello From here"
-
-
-"""def send_message(server, message):
+def initialize_user():
+	message = "GET /user/initialize HTTP/1.1\r\n"
 	msg = message.encode(FORMAT)
-	msg_length = str(len(msg)).encode(FORMAT)
-	#pad the message to the header length
-	msg_length += b' ' * (64 - len(msg_length))
-	server.send(msg_length)
-	server.send(msg)"""
 
-def send_get():
-	r = requests.get(URL, stream=True)
-	r.close()
-	
-def send_post():
-	# file = {"file": open("README.md", "rb")}
+	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+			s.connect(ADDR)
+			send_message(s, msg)
 
-	api = "/model/update"
-	
-	data = dict(songid = "flac1234")
+def update_model():
 
-	r = requests.post(URL + api, data=data, stream=True)
-	print(r.content)	
-	r.close()
+	message = """POST /model/update HTTP/1.1\r
+Content-Length: 15\r\n\r
+sondid=flac1234"""
+	msg = message.encode(FORMAT)
+
+	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+			s.connect(ADDR)
+			send_message(s, msg)
+
+def get_playlist():
+	message = "GET /playlist HTTP/1.1\r\n"
+	msg = message.encode(FORMAT)
+
+	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+			s.connect(ADDR)
+			send_message(s, msg)
+
+
+def send_message(server, msg):
+	# send the message to the server
+	server.send(msg)
+	response  = server.recv(MAX_BUFFER).decode(FORMAT)
+	print(response)
 
 def main():
-	send_post()
-	#send_get()
-	
 
+	user_input = input("""What would you like to do?
+[1] Initialize a new user?
+[2] Update the Server model?
+[3] Get a playlist from the server?
+[4] Quit\n""")
 
-	"""with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-		s.connect(ADDR)
-		send_message(s, "POST")
-		send_message(s, "file_name 9")"""
+	while user_input != "4":
+		if user_input == "1":
+			initialize_user()
+		elif user_input == "2":
+			update_model()
+		else:
+			get_playlist()
+		
+
+		user_input = input("""What would you like to do?
+[1] Initialize a new user?
+[2] Update the Server model?
+[3] Get a playlist from the server?
+[4] Quit\n""")
+		os.system("clear")
 
 
 if __name__ == "__main__":

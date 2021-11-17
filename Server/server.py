@@ -69,9 +69,9 @@ class HTTP_Parser:
 
 	def POST_request(self):
 		# get content length
-		if "Content-Length" in self.lines[6]:
+		if "Content-Length" in self.lines[1]:
 			# get integer size coresponding to file length from requesrt
-			self.file_size = int(self.lines[6].split()[1])
+			self.file_size = int(self.lines[1].split()[1])
 		else:
 			self.error  = 400
 			return
@@ -119,7 +119,6 @@ def handle_client(conn, addr):
 	with conn:
 
 		# determine if information is ready to receive from the socket
-		
 		# read data
 		client_request = conn.recv(MAX_BUFFER).decode(FORMAT)
 		print(client_request)
@@ -132,10 +131,10 @@ def handle_client(conn, addr):
 			print(message)
 			conn.sendall(message)
 		else:
-			accept_message = "HTTP/1.1 200 OK\r\nHello\r\n\r\n"
+			accept_message = "HTTP/1.1 200 OK\r\nContent-Length: 15\r\nsongid=flac1234\r\n\r\n"
 			accept_message = accept_message.encode()
 			conn.sendall(accept_message)
-			print(accept_message)
+		
 	print("[Closed connection]")
 
 def main():
