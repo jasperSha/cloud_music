@@ -18,7 +18,12 @@ def initialize_user():
 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 			s.connect(ADDR)
-			send_message(s, msg)
+			response = send_message(s, msg)
+			if response is not None:
+				# do something to initiaze the user
+				return
+			else:
+				return -1
 
 def update_model():
 
@@ -29,7 +34,13 @@ sondid=flac1234"""
 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 			s.connect(ADDR)
-			send_message(s, msg)
+			response = send_message(s, msg)
+			if response is not None:
+				# everything is ok to exit
+				return
+			else:
+				# there was an error updating the model
+				return -1
 
 def get_playlist():
 	message = "GET /playlist HTTP/1.1\r\n"
@@ -37,14 +48,38 @@ def get_playlist():
 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 			s.connect(ADDR)
-			send_message(s, msg)
+			response = send_message(s, msg)
+			if response is not None:
+				# do something with the playlist received
+				return
+			else:
+				# there was an error updating the model
+				return -1
+			
 
+def handle_error(error):
+	print(f"Received {error.split()[1:]} from the server")
+
+def handle_response(r):
+	#split the response into managable pieces
+	response_parsed = r.split("\r\n\r\n")
+	if len(response_parsed) > 1:
+		# we know this will be ok because there is a content length
+		response_header = response_parsed[0]
+		response_content = response_parsed[1]
+	else:
+		if int(response_parsed.split()[1]) >= 400:
+			handle_error(response_parsed)
+			return None
+		else:
+			return "ok"
 
 def send_message(server, msg):
 	# send the message to the server
 	server.send(msg)
 	response  = server.recv(MAX_BUFFER).decode(FORMAT)
-	print(response)
+	# handle server response
+	return handle_response(response)
 
 def main():
 

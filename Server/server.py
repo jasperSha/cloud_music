@@ -25,8 +25,6 @@ class HTTP_Parser:
 		self.request = client_request
 		self.socket = conn
 		self.error = None
-		
-
 
 	def HTTP_information(self):
 		request_line = self.lines[0].split()
@@ -54,7 +52,6 @@ class HTTP_Parser:
 		else:
 			return False
 
-	
 	def check_API(self):
 		if self.api_path not in VALID_CALLS:
 			self.error = 404
@@ -62,7 +59,6 @@ class HTTP_Parser:
 		if self.method != VALID_CALLS[self.api_path]:
 			self.error = 405
 		
-	
 	def check_protocol(self):
 		if self.protocol != "HTTP/1.1":
 			self.error = 400
@@ -84,7 +80,6 @@ class HTTP_Parser:
 		else:
 			song_id = self.lines[-1]
 			# create playlist for the client
-
 
 	def parse_request(self):
 		"""
@@ -113,7 +108,6 @@ class HTTP_Parser:
 			print("[Bad request]", self.error)
 			return self.error
 		
-
 # handle client requests
 def handle_client(conn, addr):
 	with conn:
