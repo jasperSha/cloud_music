@@ -45,7 +45,7 @@ def play_playlist(playlist):
 	return responses
 
 def initialize_user():
-	message = "GET /user/initialize HTTP/1.1\r\n"
+	message = "GET /user/initialize HTTP/1.1\r\n\r\n"
 	msg = message.encode(FORMAT)
 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -63,7 +63,7 @@ def update_model():
 
 	message = """POST /model/update HTTP/1.1\r
 Content-Length: 15\r\n\r
-"""
+songid=flac1234 12"""
 
 	# add necassary song_ids
 	msg = message.encode(FORMAT)
@@ -82,7 +82,7 @@ def get_playlist():
 	# we need to get node, k lower and k
 	# call request batch to get necassary info
 	# takes user object, max_batch = 10
-	message = "GET /playlist HTTP/1.1\r\n"
+	message = "GET /playlist HTTP/1.1\r\nContent-Length:15\r\n\r\nsongid=flac1234 12 10"
 	msg = message.encode(FORMAT)
 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -155,11 +155,12 @@ if __name__ == "__main__":
 	while user_input != "3":
 		if user_input == "1":
 			value = play_playlist(["12345", "123456", "234"])
-			print(value) 
+			print(value)
+			user_input = input("What  would you like to do?\n[1] Test play_plalsit\n[2] Simulate User\n[3] Quit: ") 
 		elif user_input == "2":
 			main()
 		else:
 			print("User error please input a number to select option")
-		user_input = input("What  would you like to do?\n[1] Test play_plalsit\n[2] Simulate User\n[3] Quit: ")
+			user_input = input("What  would you like to do?\n[1] Test play_plalsit\n[2] Simulate User\n[3] Quit: ")
 	os.system("clear")
 	

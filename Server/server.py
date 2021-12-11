@@ -94,17 +94,6 @@ class HTTP_Parser:
 			print("[Bad request]", self.error)
 			return self.error
 
-		if self.method == "POST":
-			self.POST_request()
-		elif self.method == "GET":
-			self.GET_request()
-		else:
-			# method requested is not allowed
-			self.error = 405
-		if self.check_error():
-			print("[Bad request]", self.error)
-			return self.error
-
 def GET_request(request, conn):
 	if request.get_api_path() == "/user/initialize":
 		# get the nodes to send back to the client
