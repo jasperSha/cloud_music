@@ -4,7 +4,7 @@ Python server for clients to accees and upload their model.
 
 # imports
 import socket
-import threading
+import server_model
 
 # Constants
 MAX_BUFFER = 1024
@@ -94,10 +94,14 @@ class HTTP_Parser:
 			print("[Bad request]", self.error)
 			return self.error
 
-def GET_request(request, conn):
+def GET_request(request, conn, model):
 	if request.get_api_path() == "/user/initialize":
 		# get the nodes to send back to the client
-		accept_message = "HTTP/1.1 200 OK\r\nContent-Length: 15\r\n\r\nsongid=flac1234"
+		roots = model.get_best_roots()
+		accept_message = "HTTP/1.1 200 OK\r\nContent-Length: 1485\r\n\r\n"
+		for root in roots:
+			accept_message += root + " "
+		print(accept_message)
 		accept_message = accept_message.encode()
 		conn.sendall(accept_message)
 	else:
@@ -107,14 +111,15 @@ def GET_request(request, conn):
 		accept_message = accept_message.encode()
 		conn.sendall(accept_message)
 
-def POST_request(request, conn):
+def POST_request(request, conn, model):
 	"""
 	input: client request
 	output: None or -1
 	purpose: given information from the client update the server model and send appropiate response
 	"""
 	content = request.get_content().split()
-	print(content)
+	songid = content[0]
+	root_index = content[1]
 	# do something with the songid and index
 	# based on update return values send proper response code
 	accept_message = "HTTP/1.1 201 CREATED\r\n\r\n"
@@ -122,8 +127,7 @@ def POST_request(request, conn):
 	conn.sendall(accept_message)
 
 # handle client requests
-def handle_client(conn, addr):
-	code = 0
+def handle_client(conn, addr, model):
 	with conn:
 
 		# determine if information is ready to receive from the socket
@@ -139,9 +143,9 @@ def handle_client(conn, addr):
 			print(message)
 			conn.sendall(message)
 		if request.get_method() == "POST":
-			code = POST_request(request, conn)
+			code = POST_request(request, conn, model)
 		elif request.get_method() == "GET":
-			code = GET_request(request, conn)
+			code = GET_request(request, conn, model)
 		else:
 			# method requested is not allowed
 			print("error")
@@ -149,14 +153,22 @@ def handle_client(conn, addr):
 	print("[Closed connection]")
 
 def main():
-	print(ADDR)
-	# establish new server 
+	# establish new server
+	if server_model.check_model_exists("server_model.obj"):
+		print("loading saved model")
+		model = server_model.load_model("server_model.obj")
+	else:
+		print("creating new mdoel to begin with")
+		knn_df, cluster_cols = server_model.load_data("fullmeta.csv")
+		model = server_model.Server(knn_df, .005)
+		server_model.save_model(model)
+	print(ADDR) 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
 		server.bind(ADDR)
 		server.listen()
 		while True:
 			conn, addr = server.accept()
-			handle_client(conn, addr)
+			handle_client(conn, addr, model)
 
 if __name__ == "__main__":
 	main()

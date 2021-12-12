@@ -3,12 +3,13 @@ Client program to test along side with server
 """
 import socket
 import os
+import client_model
 
 # Constants
 PORT =  9002
 HOST = socket.gethostbyname(socket.gethostname())
 ADDR = (HOST, PORT)
-MAX_BUFFER = 1024
+MAX_BUFFER = 2048
 FORMAT = "utf-8"
 
 def play_playlist(playlist):
@@ -53,7 +54,7 @@ def initialize_user():
 			response = send_message(s, msg)
 			if response is not None:
 				# do something to initiaze the user
-				return
+				return client_model.User(response)
 			else:
 				return -1
 
@@ -78,7 +79,7 @@ songid=flac1234 12"""
 				# there was an error updating the model
 				return -1
 
-def get_playlist():
+def get_playlist(user):
 	# we need to get node, k lower and k
 	# call request batch to get necassary info
 	# takes user object, max_batch = 10
@@ -115,6 +116,7 @@ def handle_response(r):
 		# we know this will be ok because there is a content length
 		response_header = response_parsed[0]
 		response_content = response_parsed[1]
+		return response_content.split() # returns list of song ids
 	else:
 		if int(response_parsed.split()[1]) >= 400:
 			handle_error(response_parsed)
@@ -127,11 +129,24 @@ def send_message(server, msg):
 	server.send(msg)
 	response  = server.recv(MAX_BUFFER).decode(FORMAT)
 	# handle server response
+	if response is None:
+		print("Error: failed connection from server")
+		return
 	return handle_response(response)
 
 def main():
 	# when program first runs we immediately initialize a new user
-	user_object =  initialize_user()
+	user_object = initialize_user()
+	if user_object == -1:
+		print("Error generating the user object")
+		user_input = input("Woudl you like to try again?: ")
+		while user_input != 'N':
+			user_object = initialize_user()
+			if user_object == -1:
+				print("Error generating the user object")
+				user_input = input("Woudl you like to try again? Y/N: ")
+		if user_input == "N":
+			return
 
 	user_input = input("""What would you like to do?
 [1] Get a playlist from the server?
@@ -140,7 +155,7 @@ def main():
 
 	while user_input != "2":
 		if user_input == "1":
-			get_playlist() # pass user
+			get_playlist(user_object) # pass user
 		else:
 			print("User error please input a number to select option")
 		user_input = input("""What would you like to do?
@@ -156,11 +171,11 @@ if __name__ == "__main__":
 		if user_input == "1":
 			value = play_playlist(["12345", "123456", "234"])
 			print(value)
-			user_input = input("What  would you like to do?\n[1] Test play_plalsit\n[2] Simulate User\n[3] Quit: ") 
 		elif user_input == "2":
 			main()
+			break
 		else:
 			print("User error please input a number to select option")
-			user_input = input("What  would you like to do?\n[1] Test play_plalsit\n[2] Simulate User\n[3] Quit: ")
+		user_input = input("What  would you like to do?\n[1] Test play_plalsit\n[2] Simulate User\n[3] Quit: ")
 	os.system("clear")
 	
