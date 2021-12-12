@@ -149,7 +149,8 @@ class Server:
 
     def update_root(self, song_id, root_index):
         raw_data = self.data.drop(self.data.columns[[0, 30, 31, 32]], axis=1)
-        song_location = raw_data.loc[raw_data['id'] == song_id]
+        song_location = raw_data.loc[self.data['id'] == song_id]
+        song_location = song_location.values.tolist()[0]
         root_location = self.root_list[root_index]
         for i in range(len(root_location)):
             root_location[i] = (song_location[i] - root_location[i]) * self.learning_rate + root_location[i]

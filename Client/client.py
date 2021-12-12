@@ -41,6 +41,7 @@ def play_playlist(playlist):
 			else:
 				print("Error: none proper input given please input L for like, D for dislike, or N for nuetral")
 				user_input = input(f"What did you think about {song}: [L, D, N]: ")
+			
 	os.system("clear")
 	print(previous_input)
 	return responses
@@ -97,7 +98,7 @@ def get_playlist(user):
 	# call filter with original node and list of songids from the server
 	batch = user.filter_batch(request_node, playlist)
 	# feedback for every song
-	if batch is not None:
+	if batch != []:
 		feed_back = play_playlist(batch)
 		# evaluate batch update user model
 		evaluation = user.evaluate_batch(feed_back)
@@ -105,6 +106,8 @@ def get_playlist(user):
 		if evaluation is not None:
 			print("Updating model")
 			update_model(evaluation[1], evaluation[0])
+	else:
+		get_playlist(user)
 
 			
 
@@ -120,7 +123,7 @@ def handle_response(r):
 		response_content = response_parsed[1]
 		return response_content.split() # returns list of song ids
 	else:
-		if int(response_parsed.split()[1]) >= 400:
+		if int(response_parsed[1]) >= 400:
 			handle_error(response_parsed)
 			return None
 		else:
@@ -149,7 +152,7 @@ def main():
 				user_input = input("Woudl you like to try again? Y/N: ")
 		if user_input == "N":
 			return
-	
+
 	user_input = input("""What would you like to do?
 [1] Get a playlist from the server?
 [2] Quit: """)
@@ -168,14 +171,17 @@ def main():
 
 
 if __name__ == "__main__":
-	user_input = input("What  would you like to do?\n[1] Test play_plalsit\n[2] Simulate User\n[3] Quit: ")
-	while user_input != "3":
+	user_input = input("What  would you like to do?\n[1] Test play_plalsit\n[2] Simulate User\n[3] Test Update Model" + 
+	"\n[4] Quit: \n")
+	while user_input != "4":
 		if user_input == "1":
 			value = play_playlist(["12345", "123456", "234"])
 			print(value)
 		elif user_input == "2":
 			main()
 			break
+		elif user_input == "3":
+			print(update_model("MCEcWcIww5k", 0))
 		else:
 			print("User error please input a number to select option")
 		user_input = input("What  would you like to do?\n[1] Test play_plalsit\n[2] Simulate User\n[3] Quit: ")
