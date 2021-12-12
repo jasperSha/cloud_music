@@ -81,15 +81,15 @@ def get_neighbors(knn_df, feature_cols, song_query, k, lower_k):
 
     query = retrieve_features(knn_df, song_query, feature_cols)
 
-    D, I = index.search(query, k)
+    D, I = index.search(query, k + lower_k)
 
     neighbors = I.flatten()
     neighbors_index = list(neighbors)
 
     if lower_k:
-        final_neighbors = knn_df.iloc[neighbors_index[:k - lower_k]]
+        final_neighbors = knn_df.iloc[neighbors_index[lower_k:k + lower_k]]
     else:
-        final_neighbors = knn_df.iloc[neighbors_index]
+        final_neighbors = knn_df.iloc[neighbors_index[:k]]
 
     return final_neighbors['id']
 
@@ -138,10 +138,11 @@ def check_model_exists(path):
 
 class Server:
     # rootlist is not a set of nodes or ids. They are points in euclidean space
-    def __init__(self, knn_df, learning_rate):
+    def __init__(self, knn_df, learning_rate, cluster_cols):
         self.data = knn_df
         self.root_list = gen_root_nodes(knn_df)
         self.learning_rate = learning_rate
+        self.cluster_cols = cluster_cols
 
     def get_best_roots(self):
         return find_nearest_songs(self.data, self.root_list)

@@ -101,13 +101,16 @@ def GET_request(request, conn, model):
 		accept_message = "HTTP/1.1 200 OK\r\nContent-Length: 1485\r\n\r\n"
 		for root in roots:
 			accept_message += root + " "
-		print(accept_message)
 		accept_message = accept_message.encode()
 		conn.sendall(accept_message)
 	else:
 		content = request.get_content().split()
 		# create playlist based off of client song_id
-		accept_message = "HTTP/1.1 200 OK\r\nContent-Length: 15\r\n\r\nsongid=flac1234"
+		print(content)
+		playlist = server_model.get_neighbors(model.data, model.cluster_cols, content[0], int(content[1]), int(content[2]))
+		accept_message = "HTTP/1.1 200 OK\r\nContent-Length: 1485\r\n\r\n"
+		for song in playlist:
+			accept_message += song + " "
 		accept_message = accept_message.encode()
 		conn.sendall(accept_message)
 
@@ -119,7 +122,8 @@ def POST_request(request, conn, model):
 	"""
 	content = request.get_content().split()
 	songid = content[0]
-	root_index = content[1]
+	root_index = int(content[1])
+	model.update_root(songid, root_index)
 	# do something with the songid and index
 	# based on update return values send proper response code
 	accept_message = "HTTP/1.1 201 CREATED\r\n\r\n"
@@ -160,7 +164,7 @@ def main():
 	else:
 		print("creating new mdoel to begin with")
 		knn_df, cluster_cols = server_model.load_data("fullmeta.csv")
-		model = server_model.Server(knn_df, .005)
+		model = server_model.Server(knn_df, .005, cluster_cols)
 		server_model.save_model(model)
 	print(ADDR) 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:

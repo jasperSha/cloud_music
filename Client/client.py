@@ -58,14 +58,11 @@ def initialize_user():
 			else:
 				return -1
 
-def update_model():
+def update_model(songid, root_index):
 
 	# for update the model songid and index number
-
-	message = """POST /model/update HTTP/1.1\r
-Content-Length: 15\r\n\r
-songid=flac1234 12"""
-
+	message = "POST /model/update HTTP/1.1\r\nContent-Length: 15\r\n\r\n"	
+	message += songid + " " + str(root_index)
 	# add necassary song_ids
 	msg = message.encode(FORMAT)
 
@@ -83,26 +80,31 @@ def get_playlist(user):
 	# we need to get node, k lower and k
 	# call request batch to get necassary info
 	# takes user object, max_batch = 10
-	message = "GET /playlist HTTP/1.1\r\nContent-Length:15\r\n\r\nsongid=flac1234 12 10"
+	request_node, k, k_lower = user.request_batch(10) 
+	message = "GET /playlist HTTP/1.1\r\nContent-Length:15\r\n\r\n"
+	message += request_node.get_id() + " " + str(k) + " " + str(k_lower)
 	msg = message.encode(FORMAT)
 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 			s.connect(ADDR)
-			response = send_message(s, msg)
-			if response is not None:
+			playlist = send_message(s, msg)
+			if playlist is not None:
 				# do something with the playlist received
-				return
+				print(playlist)
 			else:
 				# there was an error updating the model
 				return -1
 	# call filter with original node and list of songids from the server
-
+	batch = user.filter_batch(request_node, playlist)
 	# feedback for every song
-	# evaluate batch update user model
-
-	# return whether update to server is needed
-
-	# return	
+	if batch is not None:
+		feed_back = play_playlist(batch)
+		# evaluate batch update user model
+		evaluation = user.evaluate_batch(feed_back)
+		# return whether update to server is needed
+		if evaluation is not None:
+			print("Updating model")
+			update_model(evaluation[1], evaluation[0])
 
 			
 
@@ -147,7 +149,7 @@ def main():
 				user_input = input("Woudl you like to try again? Y/N: ")
 		if user_input == "N":
 			return
-
+	
 	user_input = input("""What would you like to do?
 [1] Get a playlist from the server?
 [2] Quit: """)
