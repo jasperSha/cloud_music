@@ -137,7 +137,6 @@ def find_top_ratio(root, curr_best_node, curr_best_ratio, used_nodes):
         for child in root.get_neighbors():
             # if a child existsOsCIWrLyYSo
             if not used_nodes.issuperset({child}):
-                print('Jass is a Bitch')
                 curr_best_ratio, curr_best_node, used_nodes = find_top_ratio(child, curr_best_node, curr_best_ratio, used_nodes)
 
     return curr_best_ratio, curr_best_node, used_nodes 
