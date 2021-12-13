@@ -47,6 +47,11 @@ def play_playlist(playlist):
 	return responses
 
 def initialize_user():
+	"""
+	input: None 
+	output: user object if succesful or -1 if failed
+	purpose: Creates a user object after receiving list of centroids from the server
+	"""
 	message = "GET /user/initialize HTTP/1.1\r\n\r\n"
 	msg = message.encode(FORMAT)
 
@@ -60,7 +65,11 @@ def initialize_user():
 				return -1
 
 def update_model(songid, root_index):
-
+	"""
+	input: songid -> string, root_index: number associated with cluster
+	output: None if got the ok from the server or -1 if recveived error
+	purpose: Send server proper information to update the server model
+	"""
 	# for update the model songid and index number
 	message = "POST /model/update HTTP/1.1\r\nContent-Length: 15\r\n\r\n"	
 	message += songid + " " + str(root_index)
@@ -78,6 +87,16 @@ def update_model(songid, root_index):
 				return -1
 
 def get_playlist(user):
+	"""
+	input: user -> user object 
+	output: -1 if error, or None
+	purpose: users gets proper information from the tree they have created, to communicate with the server
+	which song they would like their playlist to be based off of and how large the playlist should be. Communicates
+	with the server and gets a list of song ids back.  The playlist is then filtered to remove any duplicates, and 
+	checks whether after the filter there is any songs to 'play'.  If not the user then requests for another batch.
+	If there are songs for the user to listen to, the program will play the playlist and get feedback from the user.
+	The client then evaluates based on the feedback whether it is necessary to send an update to the server.
+	"""
 	# we need to get node, k lower and k
 	# call request batch to get necassary info
 	# takes user object, max_batch = 10
@@ -125,6 +144,11 @@ def handle_error(error):
 	print(f"Received {error.split()[1:]} from the server")
 
 def handle_response(r):
+	"""
+	input: r -> string, response from server 
+	output: returns None if an error was received from the server otherwise returns ok
+	purpose: Properly parse the response from the server adquetly determining if there was an error received
+	"""
 	#split the response into managable pieces
 	response_parsed = r.split("\r\n\r\n")
 	if len(response_parsed) > 1:
@@ -140,6 +164,11 @@ def handle_response(r):
 			return "ok"
 
 def send_message(server, msg):
+	"""
+	input: server -> address to the server, msg -> string to send to the server 
+	output: None if the there is no response from the server, returns the desired information from the server response
+	purpose: communicates with the server and returns the desired information back to calling function
+	"""
 	# send the message to the server
 	server.send(msg)
 	response  = server.recv(MAX_BUFFER).decode(FORMAT)

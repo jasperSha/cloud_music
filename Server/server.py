@@ -42,12 +42,20 @@ class HTTP_Parser:
 		return self.lines[-1]
 
 	def HTTP_information(self):
+		"""
+		input: None
+		output: None
+		purpose: seperate the http header and store for easier access
+		"""
 		request_line = self.lines[0].split()
 		self.method = request_line[0]
 		self.api_path = request_line[1]
 		self.protocol = request_line[2]
 	
 	def contents(self):
+		"""
+		Unused
+		"""
 		# determine if there is more information to read
 		self.content = self.lines[-1]
 		if len(self.request) == MAX_BUFFER and len(self.content) < self.file_size:
@@ -61,6 +69,11 @@ class HTTP_Parser:
 			self.error = 406
 
 	def check_error(self):
+		"""
+		input: None
+		Output: bool
+		purpose: check if there is error in the formating the request
+		"""
 		if self.error != None:
 			 # make  instance of error class
 			return True # to exit
@@ -68,6 +81,11 @@ class HTTP_Parser:
 			return False
 
 	def check_API(self):
+		"""
+		input: None
+		Output: None
+		purpose: determine if API call is allowed by the server
+		"""
 		if self.api_path not in VALID_CALLS:
 			self.error = 404
 			return
@@ -95,6 +113,12 @@ class HTTP_Parser:
 			return self.error
 
 def GET_request(request, conn, model):
+	"""
+	input: User request -> request object, conn -> socket fd int, model -> server_model object
+	Output: None
+	purpose: Determine what was kind of get request was called and then perform the proper
+	operation based on the request and send correct response back
+	"""
 	if request.get_api_path() == "/user/initialize":
 		# get the nodes to send back to the client
 		roots = model.get_best_roots()
@@ -118,7 +142,7 @@ def POST_request(request, conn, model):
 	"""
 	input: client request
 	output: None or -1
-	purpose: given information from the client update the server model and send appropiate response
+	purpose: given information from the client update  theserver model and send appropiate response
 	"""
 	content = request.get_content().split()
 	songid = content[0]
@@ -132,6 +156,11 @@ def POST_request(request, conn, model):
 
 # handle client requests
 def handle_client(conn, addr, model):
+	"""
+	input: conn -> socket fd int, addr -> client addr, model -> server_model object 
+	Output: None
+	purpose: read initial request from the user, parse said request, direct said requeset to proper destination
+	"""
 	with conn:
 
 		# determine if information is ready to receive from the socket
