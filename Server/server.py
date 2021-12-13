@@ -193,6 +193,7 @@ def main():
 	else:
 		print("creating new mdoel to begin with")
 		knn_df, cluster_cols = server_model.load_data("fullmeta.csv")
+		# current learning rate set to a high
 		model = server_model.Server(knn_df, .5, cluster_cols)
 		server_model.save_model(model)
 	print(ADDR) 

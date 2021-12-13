@@ -4,9 +4,46 @@ First we create our virtual environment in the project directory.
 
 So make sure we're currently in the cloud_music directory, cloud_music/
 
-These commands assume you're running in a Linux command line environment
+These commands assume you're running in a Linux Ubuntu v20.04 command line environment
 
-# Run these commands in command line as is
+# Run Project
+
+### Create python env
+
+Run this command to create the environment
+
+`python3 -m venv env`
+
+Activate the environments so necassary libraries can be installed
+
+`source env/bin/activate`
+
+Install the requirements
+
+`pip install -r req.txt`
+
+Going forward all commands will be made assuming the env is active.
+
+### Start Server
+
+enter the server directory and run the following command
+
+`python3 server.py`
+
+The server will tell the user whether a new model is being generated or loading in.  If the model is being generated it will take roughly two minutes to complete.  The server will be operational when the address and port number are print to the console.  As requests are made to the server, the server will output the requests and its contents. To stop the server, issue a keyboard interrupt with crtl + c.  For any reason, if the server were to crash, there was a bug trying to restart the server because the OS still has the addressed to reserved to the prior instance.  The best solution found was to restart command line.  All progress on the model when the server stops running.
+
+### Start the client
+
+Enter the client directory on seperate command line window than the server program and run the following command.
+
+`python3 client.py`
+
+Directions on the screen will pop up, when selecting simulate user the client will make a request to initialize a new user. From here we can print the intial nodes sent to the user in the form of song ids.  Requesting a playlist will cause the user to enter the feedback loop, a song id will be displayed on the screen. To play the song enter the following into the browser replacing songid with the song id given by the program. 
+
+`https://www.youtube.com/watch?v=songid`
+
+Give feedback based on preference. Once enough dislikes is given, the program will initiate an update once the current tree options are exhausted.  The update will be shown to the user, to see the effects, initialize a new user and check the differnce of the initial roots given to the two users.
+# Run these commands in command line as is to get songs from YouTube
 
 let's create a new virtual environment
 
@@ -18,7 +55,7 @@ now we have our virtual env running and we can install python libraries containe
 
 let's install the libraries outlined by the requirements.txt file
 
-`pip install -r requirements.txt`
+`pip install -r old_req.txt`
 
 here we set our python script to be executable
 
