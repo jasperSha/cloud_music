@@ -9,8 +9,10 @@ class User:
         self.song_set = set() # list of used id's
         root_list = []
         for id in root_ids:
+            root_node = Node(id)
+            root_node.ratio = 0
             self.song_set.add(id)
-            root_list.append(Node(id))
+            root_list.append(root_node)
         self.batch = []
         self.root_list = root_list
         self.root_index = 0
@@ -61,8 +63,12 @@ class User:
         for song_id in cur_candidates:
             if song_id not in self.song_set:
                 batch.append(song_id)
-            self.song_set.add(song_id)
+            #self.song_set.add(song_id)
         return batch
+
+    def add_songs_to_set(self, batch):
+        for song_id in batch:
+            self.song_set.add(song_id)
 
     def filter_batch(self, request_node, candidates):
         batch = self.filter_duplicates(candidates)
@@ -79,8 +85,8 @@ class Node:
         self.k_lower = 0
         self.neighbors = []
 
-        self.likes = 0
-        self.dislikes = 0
+        self.likes = 1
+        self.dislikes = 1
         self.ratio = sys.maxsize
 
     def get_id(self):
@@ -129,8 +135,9 @@ def find_top_ratio(root, curr_best_node, curr_best_ratio, used_nodes):
     # evaluates current node's children
     if root.get_neighbors() is not None:
         for child in root.get_neighbors():
-            # if a child exists
+            # if a child existsOsCIWrLyYSo
             if not used_nodes.issuperset({child}):
+                print('Jass is a Bitch')
                 curr_best_ratio, curr_best_node, used_nodes = find_top_ratio(child, curr_best_node, curr_best_ratio, used_nodes)
 
     return curr_best_ratio, curr_best_node, used_nodes 

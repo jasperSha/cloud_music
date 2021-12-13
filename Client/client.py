@@ -102,6 +102,7 @@ def get_playlist(user):
 		feed_back = play_playlist(batch)
 		# evaluate batch update user model
 		evaluation = user.evaluate_batch(feed_back)
+		user.add_songs_to_set(batch)
 		# return whether update to server is needed
 		if evaluation is not None:
 			print("Updating model")
@@ -109,7 +110,16 @@ def get_playlist(user):
 	else:
 		get_playlist(user)
 
-			
+def print_root_list(user):
+	"""
+	input: user object
+	output: None
+	purpose: print the user's root list to see how changes are being made to the server
+	"""
+	for song in user.root_list:
+		print(song.get_id(), end =" ")
+
+	print()			
 
 def handle_error(error):
 	print(f"Received {error.split()[1:]} from the server")
@@ -155,17 +165,22 @@ def main():
 
 	user_input = input("""What would you like to do?
 [1] Get a playlist from the server?
-[2] Quit: """)
+[2] Pring your current root list?
+[3] Quit: """)
 
 
-	while user_input != "2":
+	while user_input != "3":
 		if user_input == "1":
 			get_playlist(user_object) # pass user
+		elif user_input == "2":
+			print_root_list(user_object)
 		else:
 			print("User error please input a number to select option")
 		user_input = input("""What would you like to do?
 [1] Get a playlist from the server?
-[2] Quit: """)
+[2] Pring your current root list?
+[3] Quit: """)
+
 	os.system("clear")
 		
 

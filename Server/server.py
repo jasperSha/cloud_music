@@ -63,7 +63,7 @@ class HTTP_Parser:
 	def check_error(self):
 		if self.error != None:
 			 # make  instance of error class
-			 return True # to exit
+			return True # to exit
 		else:
 			return False
 
@@ -164,7 +164,7 @@ def main():
 	else:
 		print("creating new mdoel to begin with")
 		knn_df, cluster_cols = server_model.load_data("fullmeta.csv")
-		model = server_model.Server(knn_df, .005, cluster_cols)
+		model = server_model.Server(knn_df, .5, cluster_cols)
 		server_model.save_model(model)
 	print(ADDR) 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
